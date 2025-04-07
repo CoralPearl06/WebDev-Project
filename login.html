@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Correct script path -->
+    <!-- <script src="script.js" defer></script> -->
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+    <div class="heading">
+        <!-- <h1>Meteora</h1> -->
+        <div class="heading-bar">
+            <h1 class="heading">Meteora</h1>
+        </div>
+        <div class="login-container">
+            <h2 style="text-align: center;">LOGIN</h2>
+
+            <form id="login-form" onsubmit="return login(event)">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username-input" placeholder="Enter your username" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password-input" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit">Login</button>
+                <p style="font-size: small;">Don't have an account? <a href="register.html">Register here</a></p>
+            </form>
+        </div>
+
+        <!-- Correct image path -->
+        <!-- <img src="assets/images/image.jpeg" alt="Weather Dashboard"> -->
+
+        <script src="loginRegister.js"></script>
+
+        <script>
+            document.getElementById("login-form").addEventListener("submit", async function (event) {
+                event.preventDefault(); // Prevent form from reloading the page
+
+                const username = document.getElementById("username-input").value.trim();
+                const password = document.getElementById("password-input").value.trim();
+
+                if (!username || !password) {
+                    alert("Please enter a username and password.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("http://localhost:5000/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log("Login successful:", data);
+
+                        // Store the token in localStorage
+                        localStorage.setItem("weather_token", data.token);
+
+                        // Redirect to dashboard.html
+                        window.location.href = "dashboard.html";
+                    } else {
+                        const errorData = await response.json();
+                        alert(errorData.message || "Login failed!");
+                    }
+                } catch (error) {
+                    console.error("Error during login:", error);
+                    alert("An error occurred. Please try again later.");
+                }
+            });
+        </script>
+
+</body>
+
+</html>
